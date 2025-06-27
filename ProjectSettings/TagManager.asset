@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Move
   - Cube
+  - checkpoint
+  - win
   layers:
   - Default
   - TransparentFX
@@ -13,7 +15,7 @@ TagManager:
   - Map
   - Water
   - UI
-  - 
+  - Win
   - 
   - 
   - 

@@ -2,7 +2,7 @@
 using UnityEngine.InputSystem;
 using System.Collections;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     public Transform cubeA;
     public Transform cubeB;
@@ -10,7 +10,7 @@ public class PlayerManager : MonoBehaviour
 
     private Vector2 moveInput;
     private InputAction moveAction;
-    private bool isMoving = false;
+    public bool isMoving = false;
 
     private void OnEnable()
     {

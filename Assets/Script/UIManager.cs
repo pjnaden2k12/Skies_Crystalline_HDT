@@ -107,7 +107,7 @@ public class UIManager : MonoBehaviour
 
     IEnumerator ShowPanelWithDelay(GameObject panel, TMP_Text levelText)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         ShowPanel(panel);
 
         int level = PlayerPrefs.GetInt("level", 0) + 1;
@@ -115,7 +115,7 @@ public class UIManager : MonoBehaviour
             levelText.text = "Level " + level;
 
         panel.transform.localScale = Vector3.zero;
-        panel.transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutBack);
+        panel.transform.DOScale(Vector3.one, 1.2f).SetEase(Ease.OutBack);
     }
 
 

@@ -86,9 +86,17 @@ public class GameManager : MonoBehaviour
         if (player != null)
         {
             player.DOMoveY(player.position.y - 100f, 1f).SetEase(Ease.InQuad);
+
+            var controller = player.GetComponent<PlayerController>();
+            if (controller != null)
+            {
+                controller.isMoving = true;
+            }
         }
+
         uiManager.ShowLosePanel();
     }
+
 
     public void Win()
     {

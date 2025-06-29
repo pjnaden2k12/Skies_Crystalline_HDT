@@ -1,20 +1,18 @@
 {
   "mapSize": {
-    "x": 15,
-    "z": 6
+    "x": 6,
+    "z": 5
   },
   "blocks": [
-    "............BAB",
-    "ABAB.......BABA",
-    "BABA.......ABWB",
-    "ABABABABA..BABA",
-    "BABA..BAB..AB..",
-    "......ABABABA.."
-    
+    "..AA..",
+    ".ABBB.",
+    "AFFBF.",
+    ".ABFW.",
+    "..AA.."
   ],
   "playerPosition": {
-    "x": 0.5,
+    "x": 1.5,
     "y": 0.5,
-    "z": 2.5
+    "z": 0.5
   }
 }

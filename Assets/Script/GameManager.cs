@@ -116,4 +116,15 @@ public class GameManager : MonoBehaviour
         mapWidth = width;
         mapDepth = depth;
     }
+    public void SetBlockAt(int x, int z, char value)
+    {
+        if (blockRows == null || z < 0 || z >= blockRows.Length) return;
+
+        char[] row = blockRows[z].ToCharArray();
+        if (x < 0 || x >= row.Length) return;
+
+        row[x] = value;
+        blockRows[z] = new string(row);
+    }
+
 }

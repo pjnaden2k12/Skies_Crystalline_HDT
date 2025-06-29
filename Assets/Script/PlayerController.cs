@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
 
 public class PlayerController : MonoBehaviour
@@ -8,28 +7,8 @@ public class PlayerController : MonoBehaviour
     public Transform cubeB;
     public float speed = 300f;
 
-    private Vector2 moveInput;
-    private InputAction moveAction;
     public bool isMoving = false;
-
-    private void OnEnable()
-    {
-        moveAction = new InputAction(type: InputActionType.Value, binding: "<Keyboard>/arrow");
-        moveAction.AddCompositeBinding("2DVector")
-            .With("Up", "<Keyboard>/upArrow")
-            .With("Down", "<Keyboard>/downArrow")
-            .With("Left", "<Keyboard>/leftArrow")
-            .With("Right", "<Keyboard>/rightArrow");
-
-        moveAction.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
-        moveAction.canceled += ctx => moveInput = Vector2.zero;
-        moveAction.Enable();
-    }
-
-    private void OnDisable()
-    {
-        moveAction.Disable();
-    }
+    private Vector2 moveInput;
 
     void Update()
     {
@@ -59,7 +38,6 @@ public class PlayerController : MonoBehaviour
             if (Mathf.Approximately(cubeA.position.y, cubeB.position.y))
                 return;
 
-            // Hình đứng, lên/xuống pivot là cube thấp hơn
             StartCoroutine(RollUsingPivot(
                 cubeA.position.y < cubeB.position.y ? cubeA : cubeB,
                 cubeA.position.y < cubeB.position.y ? cubeB : cubeA,
@@ -67,17 +45,15 @@ public class PlayerController : MonoBehaviour
         }
         else if (isVerticalShifted)
         {
-            if (direction == Vector3.forward) // đi lên
+            if (direction == Vector3.forward)
             {
-                // Cube có z lớn hơn làm pivot (trên)
                 StartCoroutine(RollUsingPivot(
                     cubeA.position.z > cubeB.position.z ? cubeA : cubeB,
                     cubeA.position.z > cubeB.position.z ? cubeB : cubeA,
                     direction));
             }
-            else if (direction == Vector3.back) // đi xuống
+            else if (direction == Vector3.back)
             {
-                // Cube có z nhỏ hơn làm pivot (dưới)
                 StartCoroutine(RollUsingPivot(
                     cubeA.position.z < cubeB.position.z ? cubeA : cubeB,
                     cubeA.position.z < cubeB.position.z ? cubeB : cubeA,
@@ -85,7 +61,6 @@ public class PlayerController : MonoBehaviour
             }
             else if (direction == Vector3.left)
             {
-                // Xử lý trái: cube bên trái làm pivot
                 if (cubeA.position.x < cubeB.position.x)
                     StartCoroutine(RollUsingPivot(cubeA, cubeB, direction));
                 else
@@ -93,7 +68,6 @@ public class PlayerController : MonoBehaviour
             }
             else if (direction == Vector3.right)
             {
-                // Xử lý phải: cube bên phải làm pivot
                 if (cubeA.position.x > cubeB.position.x)
                     StartCoroutine(RollUsingPivot(cubeA, cubeB, direction));
                 else
@@ -102,7 +76,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // Nằm ngang hoặc không đứng/dọc, xử lý như cũ
             if (direction == Vector3.left)
             {
                 if (cubeA.position.x < cubeB.position.x)
@@ -132,6 +105,8 @@ public class PlayerController : MonoBehaviour
                     StartCoroutine(RollUsingPivot(cubeB, cubeA, direction));
             }
         }
+
+        moveInput = Vector2.zero;
     }
 
     IEnumerator RollUsingPivot(Transform pivotCube, Transform followerCube, Vector3 direction)
@@ -157,8 +132,6 @@ public class PlayerController : MonoBehaviour
         pivotCube.position = RoundVector(pivotCube.position, 0.5f);
         followerCube.position = RoundVector(followerCube.position, 0.5f);
 
-        // Cập nhật vị trí cho biến cubeA và cubeB (nếu bạn muốn swap Transform hoặc dùng biến vị trí riêng)
-        // Nếu muốn swap vị trí trong code để luôn giữ đúng cubeA là bên trái/dưới thì thêm đoạn này:
         if (pivotCube.position.x > followerCube.position.x || pivotCube.position.z > followerCube.position.z)
         {
             Transform temp = cubeA;
@@ -178,4 +151,16 @@ public class PlayerController : MonoBehaviour
         );
     }
 
+    public void MoveUp() => TryMove(Vector3.forward);
+    public void MoveDown() => TryMove(Vector3.back);
+    public void MoveLeft() => TryMove(Vector3.left);
+    public void MoveRight() => TryMove(Vector3.right);
+
+    private void TryMove(Vector3 direction)
+    {
+        if (isMoving)
+            return;
+
+        moveInput = new Vector2(direction.x, direction.z);
+    }
 }

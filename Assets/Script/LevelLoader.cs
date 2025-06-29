@@ -1,24 +1,56 @@
 ﻿using DG.Tweening;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 public class LevelLoader : MonoBehaviour
 {
+    [Header("Json Files")]
     public TextAsset[] jsonFiles;
+
+    [Header("Prefab")]
     public GameObject boxAPrefab;
     public GameObject boxBPrefab;
     public GameObject boxWinPrefab;
     public GameObject playerPrefab;
+    public GameObject boxFallPrefab;
 
+    [Header("Manager")]
+    public UIManager uiManager;
+
+    [Header("Camera")]
+    public Camera mainCamera;
+
+    private List<Tween> activeTweens = new List<Tween>();
     private int currentLevel = 0;
     private bool isLoading = false;
+    private Coroutine loadCoroutine = null;
+
 
     public void PlayGame()
     {
         if (!isLoading)
-            StartCoroutine(LoadLevelWithCloudEffect());
+            loadCoroutine = StartCoroutine(LoadLevelWithCloudEffect());
     }
-
+    public void ResetLevel()
+    {
+        
+        if (loadCoroutine != null)
+        {
+            StopCoroutine(loadCoroutine);
+            loadCoroutine = null;
+        }
+        foreach (Tween t in activeTweens)
+        {
+            if (t != null && t.IsActive())
+                t.Kill();
+        }
+        activeTweens.Clear();
+        
+        ClearMap();
+        loadCoroutine = StartCoroutine(LoadLevelWithCloudEffect());
+    }
     public IEnumerator LoadLevelWithCloudEffect()
     {
         isLoading = true;
@@ -46,11 +78,11 @@ public class LevelLoader : MonoBehaviour
                     GameObject block = Instantiate(prefab, startPos, Quaternion.identity, transform);
 
                     Sequence seq = DOTween.Sequence();
-                    seq.Append(block.transform.DOMoveY(startPos.y + 2f, 0.6f).SetEase(Ease.OutSine));
+                    seq.Append(block.transform.DOMoveY(startPos.y + 2f, 0.5f).SetEase(Ease.OutSine));
                     seq.Append(block.transform.DOMoveY(finalPos.y, 0.3f).SetEase(Ease.InSine));
                     seq.Play();
-
-                    yield return new WaitForSeconds(0.05f);
+                    activeTweens.Add(seq);
+                    yield return new WaitForSeconds(0.035f);
                 }
             }
         }
@@ -62,17 +94,38 @@ public class LevelLoader : MonoBehaviour
             GameObject player = Instantiate(playerPrefab, playerPos, Quaternion.identity, transform);
             player.transform.localScale = Vector3.zero;
             player.transform.DOScale(Vector3.one, 0.8f).SetEase(Ease.OutBack);
+            PlayerController controller = player.GetComponent<PlayerController>();
+            uiManager.SetPlayer(controller);
         }
 
         GameManager gm = FindFirstObjectByType<GameManager>();
         if (gm != null)
             gm.SetMap(level.blocks.ToArray(), level.mapSize.x, level.mapSize.z);
 
+
+        MoveCameraToCenter(level.mapSize);
+
         isLoading = false;
+    }
+    void MoveCameraToCenter(FlatMapSize size)
+    {
+        if (mainCamera == null) return;
+
+        float centerX = size.x / 2f;
+        
+        Vector3 targetPos = new Vector3(centerX, 10f,-7f);     
+
+        mainCamera.transform.DOMove(targetPos, 1f).SetEase(Ease.InOutSine);
     }
 
     public void ClearMap()
     {
+        foreach (Tween t in activeTweens)
+        {
+            if (t != null && t.IsActive())
+                t.Kill();
+        }
+        activeTweens.Clear();
         for (int i = transform.childCount - 1; i >= 0; i--)
             Destroy(transform.GetChild(i).gameObject);
     }
@@ -84,6 +137,7 @@ public class LevelLoader : MonoBehaviour
             case 'A': return boxAPrefab;
             case 'B': return boxBPrefab;
             case 'W': return boxWinPrefab;
+            case 'F': return boxFallPrefab;
             default: return null;
         }
     }

@@ -6,24 +6,67 @@ using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Panel")]
     public GameObject panelHome;
     public GameObject panelWin;
     public GameObject panelLose;
     public GameObject panelHtp;
+    public GameObject panelInGame;
 
+    [Header("Text")]
     public TMP_Text textWinLevel;
     public TMP_Text textLoseLevel;
 
+    [Header("Manager")]
     public LevelLoader levelLoader;
     public GameManager gameManager;
 
     public Image fadeOverlay;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip buttonClickSound;
+    public AudioClip winSound;
+    public AudioClip loseSound;
+    public AudioClip[] moveSounds;
+
+
     private float fadeTime = 0.6f;
     private float scaleTime = 0.4f;
 
+    private PlayerController playerController;
+
+    public void SetPlayer(PlayerController controller)
+    {
+        playerController = controller;
+    }
+    void PlayButtonClickSound()
+    {
+        if (audioSource != null && buttonClickSound != null)
+        {
+            audioSource.PlayOneShot(buttonClickSound);
+        }
+    }
+    void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+    }
+    void PlayRandomMoveSound()
+    {
+        if (audioSource != null && moveSounds != null && moveSounds.Length > 0)
+        {
+            int index = Random.Range(0, moveSounds.Length);
+            audioSource.PlayOneShot(moveSounds[index]);
+        }
+    }
+
     private void Start()
     {
+        playerController = FindAnyObjectByType<PlayerController>();
+
         fadeOverlay.gameObject.SetActive(true);
         fadeOverlay.color = new Color(0, 0, 0, 1);
         fadeOverlay.DOFade(0, fadeTime).SetEase(Ease.OutQuad);
@@ -36,9 +79,11 @@ public class UIManager : MonoBehaviour
 
     public void OnPlayClicked()
     {
+        PlayButtonClickSound();
         StartCoroutine(FadeAndDo(() =>
         {
             HideAllPanels();
+            panelInGame.SetActive(true);
             levelLoader.ClearMap();
             gameManager.ResetGameState();
             levelLoader.PlayGame();
@@ -47,17 +92,20 @@ public class UIManager : MonoBehaviour
 
     public void OnResetClicked()
     {
+        PlayButtonClickSound();
         StartCoroutine(FadeAndDo(() =>
         {
             HideAllPanels();
-            levelLoader.ClearMap();
-            gameManager.ResetGameState();
-            levelLoader.PlayGame();
+            panelInGame.SetActive(true);
+            levelLoader.ResetLevel();
+            if (gameManager != null)
+                gameManager.ResetGameState();
         }));
     }
 
     public void OnNextLevelClicked()
     {
+        PlayButtonClickSound();
         StartCoroutine(FadeAndDo(() =>
         {
             HideAllPanels();
@@ -66,11 +114,13 @@ public class UIManager : MonoBehaviour
             levelLoader.ClearMap();
             gameManager.ResetGameState();
             levelLoader.PlayGame();
+            panelInGame.SetActive(true);
         }));
     }
 
     public void OnHomeClicked()
     {
+        PlayButtonClickSound();
         StartCoroutine(FadeAndDo(() =>
         {
             ShowPanel(panelHome);
@@ -80,6 +130,7 @@ public class UIManager : MonoBehaviour
 
     public void OnHtpClicked()
     {
+        PlayButtonClickSound();
         ShowPanel(panelHtp);
         panelHtp.transform.localScale = Vector3.zero;
         panelHtp.transform.DOScale(Vector3.one, scaleTime).SetEase(Ease.OutBack);
@@ -87,6 +138,7 @@ public class UIManager : MonoBehaviour
 
     public void OnCloseHtp()
     {
+        PlayButtonClickSound();
         panelHtp.transform.DOScale(Vector3.zero, scaleTime).SetEase(Ease.InBack)
             .OnComplete(() => panelHtp.SetActive(false));
         foreach (Transform child in panelHome.transform)
@@ -97,11 +149,15 @@ public class UIManager : MonoBehaviour
 
     public void ShowWinPanel()
     {
+        StartCoroutine(DelayPanelInGameOff());
+        PlaySound(winSound);
         StartCoroutine(ShowPanelWithDelay(panelWin, textWinLevel));
     }
 
     public void ShowLosePanel()
     {
+        StartCoroutine(DelayPanelInGameOff());
+        PlaySound(loseSound);
         StartCoroutine(ShowPanelWithDelay(panelLose, textLoseLevel));
     }
 
@@ -117,7 +173,6 @@ public class UIManager : MonoBehaviour
         panel.transform.localScale = Vector3.zero;
         panel.transform.DOScale(Vector3.one, 1.2f).SetEase(Ease.OutBack);
     }
-
 
     void ShowPanel(GameObject panel)
     {
@@ -144,6 +199,7 @@ public class UIManager : MonoBehaviour
             panel.SetActive(true);
         }
     }
+
     IEnumerator AnimatePanelHome()
     {
         float delayBetween = 0.3f;
@@ -180,5 +236,43 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
         fadeOverlay.DOFade(0, fadeTime).SetEase(Ease.InOutQuad);
+    }
+
+    public void OnMoveUp()
+    {
+        playerController?.MoveUp();
+        PlayRandomMoveSound();
+    }
+
+    public void OnMoveDown()
+    {
+        playerController?.MoveDown();
+        PlayRandomMoveSound();
+    }
+
+    public void OnMoveLeft()
+    {
+        playerController?.MoveLeft();
+        PlayRandomMoveSound();
+    }
+
+    public void OnMoveRight()
+    {
+        playerController?.MoveRight();
+        PlayRandomMoveSound();
+    }
+    IEnumerator DelayPanelInGameOff()
+    {
+        yield return new WaitForSeconds(0.5f);
+        panelInGame.SetActive(false);
+    }
+    ///////////////////////////////////////////
+    public void OnResetPrefsClicked()
+    {
+       
+        PlayerPrefs.DeleteAll(); 
+        PlayerPrefs.Save();
+
+        Debug.Log("PlayerPrefs reset!");
     }
 }

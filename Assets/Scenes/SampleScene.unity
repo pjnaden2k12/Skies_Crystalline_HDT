@@ -1343,7 +1343,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &837710882
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1360,7 +1360,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: -0.000030518}
+  m_AnchoredPosition: {x: 0, y: -0.000061035156}
   m_SizeDelta: {x: 150, y: 90}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &837710883
@@ -2666,13 +2666,26 @@ MonoBehaviour:
   jsonFiles:
   - {fileID: 4900000, guid: 7fb9ac3606a91f746aedd39e418947bb, type: 3}
   - {fileID: 4900000, guid: 794dff1731da8fd4b86cdd5d16b4dbd1, type: 3}
-  - {fileID: 4900000, guid: 794dff1731da8fd4b86cdd5d16b4dbd1, type: 3}
+  - {fileID: 4900000, guid: 61bc2ce6759e4e749893ca9bdd7cdabc, type: 3}
   - {fileID: 4900000, guid: e4aedf19254ae8e45bb0f309f94ac549, type: 3}
-  boxAPrefab: {fileID: 2786083922524164816, guid: 062bb4c5370c4c24cab9e0e3555e6697, type: 3}
-  boxBPrefab: {fileID: 2786083922524164816, guid: 0edca547f980d6349ae7426b5ade00d8, type: 3}
-  boxWinPrefab: {fileID: 3724266211364880732, guid: a9d541e09f51fb64cb716f1aab90a6c0, type: 3}
+  - {fileID: 4900000, guid: ef052b18e775a664b9e9f28d07681ce5, type: 3}
+  - {fileID: 4900000, guid: 369ae782d2bd5e84e8b6d0240da90f30, type: 3}
+  - {fileID: 4900000, guid: 1fe7c47ee7139f14997aaed0bb70f673, type: 3}
+  - {fileID: 4900000, guid: 0e340f252bbc89943aaf71d8e90a36da, type: 3}
+  - {fileID: 4900000, guid: 05f94a330373f5345b29fa7db819661f, type: 3}
+  - {fileID: 4900000, guid: 54c697d2961de43429aa20c22c51c3ec, type: 3}
+  - {fileID: 4900000, guid: b4c58fa8b23c8fb4f952f935c980bde0, type: 3}
+  - {fileID: 4900000, guid: 76c58406e69e2ef438192c5e25bb9d41, type: 3}
+  - {fileID: 4900000, guid: 681216323af1788409256623b88a7aaf, type: 3}
+  - {fileID: 4900000, guid: 41218a3175d834e4e9d394d948e89020, type: 3}
+  - {fileID: 4900000, guid: 92d9865c03d9e4440b1b79e2e734ca05, type: 3}
+  boxAPrefab: {fileID: 3724266211364880732, guid: 680d803e50bd36c4fb1ee1be025f8e95, type: 3}
+  boxBPrefab: {fileID: 3724266211364880732, guid: 2a5e8e6c45d6960479235c3f704b108a, type: 3}
+  boxWinPrefab: {fileID: 2786083922524164816, guid: d9e795d036aed2e45a7d414a5b361cd8, type: 3}
   playerPrefab: {fileID: 8243452810493166781, guid: e004ad3efe8ccd44cbbb658d13ed1942, type: 3}
+  boxFallPrefab: {fileID: 2786083922524164816, guid: 0edca547f980d6349ae7426b5ade00d8, type: 3}
   uiManager: {fileID: 2091498953}
+  mainCamera: {fileID: 330585545}
 --- !u!4 &1617060907
 Transform:
   m_ObjectHideFlags: 0
